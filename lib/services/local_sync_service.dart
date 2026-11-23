@@ -808,7 +808,12 @@ class LocalSyncService {
       }
       final blockedUntil = Hive.box('userNoBackup')
           .get('localSyncPairBlockedUntil');
-      if (blockedUntil is int && now.millisecondsSinceEpoch < blockedUntil) {
+
+      final nowMs = now.millisecondsSinceEpoch;
+
+      if (blockedUntil is int &&
+          nowMs < blockedUntil &&
+          blockedUntil - nowMs <= _pairBlockCap.inMilliseconds) {
         return (429, {'error': 'pairing_busy'});
       }
       if (_pendingSession != null ||
