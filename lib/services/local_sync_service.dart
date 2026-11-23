@@ -253,6 +253,9 @@ class LocalSyncService {
   /// they may not start another pairing.
   final Map<String, DateTime> _pairCooldownUntil = {};
 
+  static const int _pairStrikeLimit = 3;
+  final Map<String, int> _pairStrikes = {};
+
   /// Runs once a pairing is trusted and before the reply is sent (tests).
   @visibleForTesting
   Future<void> Function()? beforePairingReply;
@@ -1166,6 +1169,12 @@ class LocalSyncService {
 
   void _startPairCooldown(String? address) {
     if (address == null) return;
+    final strikes = (_pairStrikes[address] ?? 0) + 1;
+    if (strikes < _pairStrikeLimit) {
+      _pairStrikes[address] = strikes;
+      return;
+    }
+    _pairStrikes.remove(address);
     _pairCooldownUntil[address] = _pairingNow().add(_pairCooldown);
   }
 
