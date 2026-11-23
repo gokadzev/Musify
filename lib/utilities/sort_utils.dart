@@ -19,20 +19,46 @@
  *     please visit: https://github.com/gokadzev/Musify
  */
 
-/// Returns a new list sorted by [sortKey] (case-insensitive).
-/// Stable: ties keep their input order (List.sort alone is not stable).
-List<dynamic> sortSongsByKey(List<dynamic> songs, String sortKey) {
-  String keyOf(dynamic song) =>
-      (song is Map ? song[sortKey] ?? '' : '').toString().toLowerCase();
+/// Display order offered for the library lists and for folder contents.
+enum LibrarySortType { default_, nameAsc, nameDesc }
+
+/// Returns a new list sorted by [sortKey] (case-insensitive), reversed when
+/// [descending]. Stable: ties keep their input order (List.sort alone is not).
+List<dynamic> sortByKey(
+  List<dynamic> items,
+  String sortKey, {
+  bool descending = false,
+}) {
+  String keyOf(dynamic item) =>
+      (item is Map ? item[sortKey] ?? '' : '').toString().toLowerCase();
 
   final indexed =
-      [for (var i = 0; i < songs.length; i++) (index: i, key: keyOf(songs[i]))]
+      [for (var i = 0; i < items.length; i++) (index: i, key: keyOf(items[i]))]
         ..sort((a, b) {
-          final byKey = a.key.compareTo(b.key);
+          final byKey = descending
+              ? b.key.compareTo(a.key)
+              : a.key.compareTo(b.key);
           return byKey != 0 ? byKey : a.index.compareTo(b.index);
         });
-  return [for (final entry in indexed) songs[entry.index]];
+  return [for (final entry in indexed) items[entry.index]];
 }
+
+/// Song flavour of [sortByKey], kept for readability at its call sites.
+List<dynamic> sortSongsByKey(List<dynamic> songs, String sortKey) =>
+    sortByKey(songs, sortKey);
+
+/// Returns a new list of library entries ordered for [type]. [nameKey] holds
+/// the displayed name: 'title' for playlists and artists, 'name' for folders.
+/// Display-only: the stored order is never touched.
+List<dynamic> sortLibraryItems(
+  List<dynamic> items,
+  LibrarySortType type, {
+  String nameKey = 'title',
+}) => switch (type) {
+  LibrarySortType.default_ => List<dynamic>.of(items),
+  LibrarySortType.nameAsc => sortByKey(items, nameKey),
+  LibrarySortType.nameDesc => sortByKey(items, nameKey, descending: true),
+};
 
 /// Returns a new list with the most recently appended songs first.
 List<dynamic> sortSongsNewestFirst(List<dynamic> songs) =>
