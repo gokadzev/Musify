@@ -1557,7 +1557,10 @@ class LocalSyncService {
       }
       final untrusted =
           (e is _LocalSyncException && e.error == LocalSyncError.untrusted) ||
-          (e is _HttpFailure && e.status == 403 && e.code == 'not_paired');
+          (e is _HttpFailure &&
+              e.status == 403 &&
+              e.code == 'not_paired' &&
+              _verifiedAddress[device.deviceId] == device.ip);
       final count = (_retryCount[device.deviceId] ?? 0) + 1;
       _retryCount[device.deviceId] = count;
       _retryAfter[device.deviceId] = DateTime.now().add(
