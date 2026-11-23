@@ -343,7 +343,11 @@ class LocalSyncService {
     }
   }
 
-  bool _storageRestoreInProgress = false;
+  DateTime? _restoreStartedAt;
+  bool get _storageRestoreInProgress =>
+      _restoreStartedAt != null &&
+      DateTime.now().difference(_restoreStartedAt!) <
+          const Duration(minutes: 5);
 
   /// Periodic and startup work: brings a dead server back up, then syncs.
   Future<void> _tick() async {
@@ -394,7 +398,7 @@ class LocalSyncService {
   }
 
   Future<void> pauseForStorageRestore() async {
-    _storageRestoreInProgress = true;
+    _restoreStartedAt = DateTime.now();
     _localChangeTimer?.cancel();
     await stopServer();
     await Future.wait(_outbound.values.toList());
@@ -414,7 +418,7 @@ class LocalSyncService {
         await _stopBackgroundWork();
       }
     } finally {
-      _storageRestoreInProgress = false;
+      _restoreStartedAt = null;
     }
   }
 
