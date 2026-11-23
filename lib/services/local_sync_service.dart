@@ -1488,7 +1488,7 @@ class LocalSyncService {
       return;
     }
     _lastResumeSync = DateTime.now();
-    await triggerSilentSync();
+    await _tick();
   }
 
   /// Syncs with every paired device found by a short discovery, without UI.
