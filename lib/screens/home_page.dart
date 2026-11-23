@@ -19,8 +19,6 @@
  *     please visit: https://github.com/gokadzev/Musify
  */
 
-import 'dart:math' as math;
-
 import 'package:fluentui_system_icons/fluentui_system_icons.dart';
 import 'package:go_router/go_router.dart';
 import 'package:material_ui/material_ui.dart';
@@ -145,33 +143,70 @@ class _HomePageState extends State<HomePage> {
   }
 
   Widget _buildSuggestedPlaylistsSection(
-    double height,
+    double playlistHeight,
     List<dynamic> playlists, {
     bool showOnlyLiked = false,
   }) {
     if (playlists.isEmpty) return const SizedBox.shrink();
 
-    final title = showOnlyLiked
+    final sectionTitle = showOnlyLiked
         ? context.l10n!.backToFavorites
         : context.l10n!.suggestedPlaylists;
-    final count = playlists.length.clamp(0, recommendedCubesNumber);
+    final itemsNumber = playlists.length.clamp(0, recommendedCubesNumber);
+    final isLargeScreen = MediaQuery.of(context).size.width > 480;
 
     return Column(
       children: [
         SectionHeader(
-          title: title,
+          title: sectionTitle,
           icon: showOnlyLiked
               ? FluentIcons.heart_24_filled
               : FluentIcons.list_24_filled,
         ),
-        SizedBox(
-          height: height,
-          child: _PlaylistCarousel(
-            playlists: playlists.take(count).toList(),
-            onTap: (p) => context.push('/home/playlist/${p['ytid']}'),
-          ),
+        ConstrainedBox(
+          constraints: BoxConstraints(maxHeight: playlistHeight),
+          child: isLargeScreen
+              ? _buildHorizontalList(playlists, itemsNumber, playlistHeight)
+              : _buildCarouselView(playlists, itemsNumber, playlistHeight),
         ),
       ],
+    );
+  }
+
+  Widget _buildHorizontalList(
+    List<dynamic> playlists,
+    int itemCount,
+    double height,
+  ) {
+    return ListView.builder(
+      scrollDirection: Axis.horizontal,
+      itemCount: itemCount,
+      itemBuilder: (context, index) {
+        final playlist = playlists[index];
+        return Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 8),
+          child: GestureDetector(
+            onTap: () => context.push('/home/playlist/${playlist['ytid']}'),
+            child: PlaylistCube(playlist, size: height),
+          ),
+        );
+      },
+    );
+  }
+
+  Widget _buildCarouselView(
+    List<dynamic> playlists,
+    int itemCount,
+    double height,
+  ) {
+    return CarouselView.weighted(
+      flexWeights: const <int>[3, 2, 1],
+      itemSnapping: true,
+      onTap: (index) =>
+          context.push('/home/playlist/${playlists[index]['ytid']}'),
+      children: List.generate(itemCount, (index) {
+        return PlaylistCube(playlists[index], size: height * 2);
+      }),
     );
   }
 
@@ -253,112 +288,6 @@ class _HomePageState extends State<HomePage> {
       title: context.l10n!.recommendedForYou,
       songs: data,
       listKeyPrefix: 'home_recommended',
-    );
-  }
-}
-
-class _PlaylistCarousel extends StatelessWidget {
-  const _PlaylistCarousel({required this.playlists, required this.onTap});
-
-  final List<dynamic> playlists;
-  final void Function(dynamic playlist) onTap;
-
-  static const _large = 6, _medium = 3, _small = 1;
-
-  @override
-  Widget build(BuildContext context) {
-    final cs = Theme.of(context).colorScheme;
-
-    return LayoutBuilder(
-      builder: (context, constraints) {
-        final width = constraints.maxWidth;
-        final height = constraints.maxHeight;
-
-        const tail = (_medium + _small) / _large;
-        final full = (width / height - tail).round().clamp(1, 8);
-
-        final weights = [
-          ...List.filled(full, _large),
-          _medium,
-          _small,
-        ].take(playlists.length).toList();
-
-        final weightSum = weights.fold<int>(0, (a, b) => a + b);
-        final neededWidth = height * weightSum / _large;
-
-        return Align(
-          alignment: Alignment.centerLeft,
-          child: SizedBox(
-            width: math.min(width, neededWidth),
-            child: CarouselView.weighted(
-              flexWeights: weights,
-              itemSnapping: true,
-              padding: const EdgeInsets.symmetric(horizontal: 4),
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(28),
-              ),
-              elevation: 0,
-              backgroundColor: cs.surfaceContainerHigh,
-              onTap: (i) => onTap(playlists[i]),
-              children: [
-                for (final p in playlists)
-                  _CarouselItem(key: ValueKey(p['ytid']), playlist: p),
-              ],
-            ),
-          ),
-        );
-      },
-    );
-  }
-}
-
-class _CarouselItem extends StatelessWidget {
-  const _CarouselItem({super.key, required this.playlist});
-
-  final dynamic playlist;
-
-  @override
-  Widget build(BuildContext context) {
-    final theme = Theme.of(context);
-
-    return LayoutBuilder(
-      builder: (context, constraints) {
-        final showLabel = constraints.maxWidth > 140;
-
-        return Stack(
-          fit: StackFit.expand,
-          children: [
-            PlaylistCube(playlist, size: constraints.biggest.longestSide),
-            if (showLabel) ...[
-              const DecoratedBox(
-                decoration: BoxDecoration(
-                  gradient: LinearGradient(
-                    begin: Alignment.topCenter,
-                    end: Alignment.bottomCenter,
-                    colors: [Colors.transparent, Color(0xCC000000)],
-                    stops: [0.5, 1],
-                  ),
-                ),
-              ),
-              Positioned(
-                left: 16,
-                right: 16,
-                bottom: 14,
-                child: Text(
-                  playlist['title'] ?? '',
-                  maxLines: 2,
-                  overflow: TextOverflow.ellipsis,
-                  softWrap: true,
-                  style: theme.textTheme.titleMedium?.copyWith(
-                    color: Colors.white,
-                    fontWeight: FontWeight.w600,
-                  ),
-                ),
-              ),
-            ],
-          ],
-        );
-      },
     );
   }
 }
