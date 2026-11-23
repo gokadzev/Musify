@@ -445,6 +445,7 @@ class LocalSyncService {
       return false;
     }
     await _startBackgroundWork();
+    _clearBackoff();
     unawaited(triggerSilentSync());
     return true;
   }
@@ -453,6 +454,7 @@ class LocalSyncService {
     await Hive.box('settings').put(_automaticKey, enabled);
     localSyncAutomatic.value = enabled;
     if (enabled) {
+      _clearBackoff();
       unawaited(triggerSilentSync());
     } else {
       _localChangeTimer?.cancel();
@@ -476,7 +478,16 @@ class LocalSyncService {
     }
     await Hive.box('settings')
         .put('localSyncCategories', categories.map((e) => e.name).toList());
-    if (categories.isNotEmpty) _scheduleLocalSync();
+    if (categories.isNotEmpty) {
+      _clearBackoff();
+      _scheduleLocalSync();
+    }
+  }
+
+  /// A settings change may be what was making devices fail: try them again now.
+  void _clearBackoff() {
+    _retryAfter.clear();
+    _retryCount.clear();
   }
 
   void _beginTransfer() => _activeTransfers++;
@@ -926,7 +937,6 @@ class LocalSyncService {
 
   /// A wrong PIN closes the attempt and, from the fifth in a row, blocks new ones.
   Future<_Reply> _countWrongPin() async {
-    _startPairCooldown(_pendingAddress);
     _cancelPendingPairing();
     try {
       final store = Hive.box('userNoBackup');
@@ -1507,6 +1517,8 @@ class LocalSyncService {
         if (await _syncQuietly(targets[i])) lastChanged = i;
       }
       for (var i = 0; i < lastChanged; i++) {
+        final until = _retryAfter[targets[i].deviceId];
+        if (until != null && until.isAfter(DateTime.now())) continue;
         await _syncQuietly(targets[i]);
       }
     } finally {
@@ -1526,6 +1538,10 @@ class LocalSyncService {
       return result.local.isNotEmpty;
     } catch (e) {
       logger.log('Automatic local sync with ${device.name} failed: $e');
+      // The server stopped (restore, sync turned off): not the device's fault.
+      if (e is _LocalSyncException && e.error == LocalSyncError.notRunning) {
+        return false;
+      }
       final untrusted =
           (e is _LocalSyncException && e.error == LocalSyncError.untrusted) ||
           (e is _HttpFailure && e.status == 403 && e.code == 'not_paired');
@@ -1759,7 +1775,10 @@ class LocalSyncService {
     }
 
     final abort = Completer<void>();
-    final deadline = Timer(timeout, () {
+    // The deadline covers sending, the other side's merge and its reply, so it
+    // grows with the message: one second per 256 KiB, doubled for the reply.
+    final allowance = Duration(seconds: encoded.length ~/ (256 * 1024) * 2);
+    final deadline = Timer(timeout + allowance, () {
       if (!abort.isCompleted) abort.complete();
     });
     final outgoing =
