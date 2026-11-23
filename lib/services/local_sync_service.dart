@@ -212,6 +212,11 @@ class LocalSyncService {
   static const String _automaticKey = 'localSyncAutomatic';
   static const String _lastSyncedAtKey = 'localSyncLastSyncedAt';
 
+  String get _shortId {
+    final id = LibraryMergeService.deviceId;
+    return (id.length <= 4 ? id : id.substring(id.length - 4)).toUpperCase();
+  }
+
   final ValueNotifier<LocalSyncState> state = ValueNotifier(
     const LocalSyncState(),
   );
@@ -305,7 +310,7 @@ class LocalSyncService {
   int? get serverPort => _httpServer?.port;
 
   String get deviceName => isAndroidPlatform
-      ? 'Musify (Android)'
+      ? 'Musify (Android $_shortId)'
       : 'Musify (${Platform.localHostname})';
 
   Future<void> initialise() async {
@@ -361,10 +366,7 @@ class LocalSyncService {
     _startupTimer?.cancel();
     _startupTimer = null;
     if (!startupSync) return;
-    _startupTimer = Timer(
-      _startupSyncDelay,
-      () => unawaited(_tick()),
-    );
+    _startupTimer = Timer(_startupSyncDelay, () => unawaited(_tick()));
   }
 
   Future<void> _stopBackgroundWork() async {
