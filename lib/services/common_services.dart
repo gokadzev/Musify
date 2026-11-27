@@ -347,9 +347,9 @@ Future<List> _getRecommendationsFromMixedSources() async {
   }
   recommendationSources.add(globalSongs.take(10));
 
-  if (userCustomPlaylists.value.isNotEmpty) {
-    for (final userPlaylist in userCustomPlaylists.value) {
-      final playlistSongs = userPlaylist['list'] as List;
+  for (final userPlaylist in userCustomPlaylists.value) {
+    final playlistSongs = userPlaylist['list'];
+    if (playlistSongs is List) {
       recommendationSources.add(_sampleSeedSongs(playlistSongs, 5));
     }
   }
