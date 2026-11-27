@@ -849,14 +849,19 @@ Future<Map<String, dynamic>> getSongDetails(
   }
 }
 
+String? _currentLyricsKey;
+String? _lyricsMissKey;
+DateTime _lyricsMissAt = DateTime.fromMillisecondsSinceEpoch(0);
+
 Lyrics? _lastLyricsResult;
-int _lyricsRequestCounter = 0;
 
 /// Plain-text version of [result] as shown for unsynced lyrics.
 String formatPlainLyrics(Lyrics result) {
-  return '${result.text}\n\n© ${result.source}'
-      .replaceAll(RegExp(r'\n{4}'), '\n\n')
-      .replaceAll(RegExp(r'\n{2}'), '\n');
+  final text = result.text
+      .replaceAll('\r\n', '\n')
+      .replaceAll(RegExp(r'\n{3,}'), '\n\n')
+      .trim();
+  return '$text\n\n© ${result.source}';
 }
 
 /// Fetches lyrics for a song, keeping timestamps when the provider has them.
@@ -869,20 +874,29 @@ Future<Lyrics?> getSongLyricsResult(
   if (artist == null) return null;
   final key = '$artist - $title';
   if (lastFetchedLyrics == key) return _lastLyricsResult;
+  if (_lyricsMissKey == key &&
+      DateTime.now().difference(_lyricsMissAt) < const Duration(minutes: 5)) {
+    return null;
+  }
 
   lyrics.value = null;
-  final requestId = ++_lyricsRequestCounter;
+  _currentLyricsKey = key;
   final result = await LyricsManager().fetchLyricsResult(
     TrackInfo(title: title, artist: artist, album: album, duration: duration),
   );
-  if (result == null) return null;
 
-  // Ignore the response if the user already moved on to another song.
-  if (requestId == _lyricsRequestCounter) {
-    _lastLyricsResult = result;
-    lyrics.value = formatPlainLyrics(result);
-    lastFetchedLyrics = key;
+  // The user already moved on to another song: this answer is not for them.
+  if (_currentLyricsKey != key) return null;
+
+  if (result == null) {
+    _lyricsMissKey = key;
+    _lyricsMissAt = DateTime.now();
+    return null;
   }
+
+  _lastLyricsResult = result;
+  lyrics.value = formatPlainLyrics(result);
+  lastFetchedLyrics = key;
   return result;
 }
 
