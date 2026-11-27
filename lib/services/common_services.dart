@@ -686,7 +686,6 @@ Future<Map<String, dynamic>?> getSimilarSong(
         return candidate;
       }
     }
-    logger.log('No new related songs found for $songYtId');
   } catch (e, stackTrace) {
     logger.log(
       'Error while fetching next similar song:',
