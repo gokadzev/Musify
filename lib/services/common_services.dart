@@ -228,6 +228,7 @@ Future<List> _getRecommendationsFromSeedSongs(List seedSongs) async {
       .toList();
   if (seeds.isEmpty) return [];
 
+  final seedIds = seeds.map((song) => song['ytid'].toString()).toSet();
   final scores = <String, double>{};
   final songMap = <String, Map>{};
 
@@ -235,16 +236,23 @@ Future<List> _getRecommendationsFromSeedSongs(List seedSongs) async {
     final seedIndex = entry.key;
     final songData = entry.value;
     try {
-      final song = await ytClient.videos.get(songData['ytid']);
-      final related = await ytClient.videos.getRelatedVideos(song) ?? [];
-      for (var i = 0; i < related.length && i < 8; i++) {
-        final s = returnSongLayout(0, related[i]);
-        final id = s['ytid'];
-        final positionWeight = 1.0 - (i / 8);
-        final recencyWeight = 1.0 - (seedIndex / seeds.length);
-        scores[id] = (scores[id] ?? 0) + positionWeight * recencyWeight;
-        songMap[id] = s;
-      }
+      await () async {
+        final song = await ytClient.videos.get(songData['ytid']);
+        final related = await ytClient.videos.getRelatedVideos(song) ?? [];
+        var rank = 0;
+        for (final video in related) {
+          if (rank >= 8) break;
+          if (!_looksLikeSingleSong(video)) continue;
+          final s = returnSongLayout(0, video);
+          final id = s['ytid']?.toString();
+          if (id == null || seedIds.contains(id)) continue;
+          final positionWeight = 1.0 - (rank / 8);
+          final recencyWeight = 1.0 - (seedIndex / seeds.length);
+          scores[id] = (scores[id] ?? 0) + positionWeight * recencyWeight;
+          songMap[id] = s;
+          rank++;
+        }
+      }().timeout(const Duration(seconds: 10));
     } catch (e, st) {
       logger.log(
         'related videos error for ${songData['ytid']}',
