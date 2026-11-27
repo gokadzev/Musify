@@ -211,11 +211,13 @@ Future<List> getRecommendedSongs() async {
 }
 
 Future<List> _getRecommendationsFromRecentlyPlayed() async {
-  final recent = (List.from(
-    userRecentlyPlayed.value,
-  )..shuffle()).take(5).toList();
+  final latest = userRecentlyPlayed.value.take(20).toList();
+  final picks = latest.asMap().entries.toList()..shuffle();
+  final seeds = (picks.take(5).toList()..sort((a, b) => a.key.compareTo(b.key)))
+      .map((entry) => entry.value)
+      .toList();
 
-  return _getRecommendationsFromSeedSongs(recent);
+  return _getRecommendationsFromSeedSongs(seeds);
 }
 
 /// Expands seed songs into related videos and ranks them for home and playlist recommendations.
