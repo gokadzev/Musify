@@ -362,13 +362,13 @@ Future<void> updateSongLikeStatus(
   bool add, {
   Map? songData,
 }) async {
+  final normalizedSongId = songId?.toString().trim() ?? '';
+  if (normalizedSongId.isEmpty) return;
+
+  final updateToken = ++_songLikeUpdateToken;
+  _latestSongLikeUpdateTokens[normalizedSongId] = updateToken;
+
   try {
-    final normalizedSongId = songId?.toString().trim() ?? '';
-    if (normalizedSongId.isEmpty) return;
-
-    final updateToken = ++_songLikeUpdateToken;
-    _latestSongLikeUpdateTokens[normalizedSongId] = updateToken;
-
     final songToAdd = add
         ? await _resolveSongForLikedStatus(normalizedSongId, songData)
         : null;
@@ -392,8 +392,9 @@ Future<void> updateSongLikeStatus(
       );
     }
 
-    if (_likedSongIdsAreEqual(userLikedSongsList.value, updatedLikedSongs))
+    if (_likedSongIdsAreEqual(userLikedSongsList.value, updatedLikedSongs)) {
       return;
+    }
 
     userLikedSongsList.value = updatedLikedSongs;
     unawaited(
@@ -405,6 +406,12 @@ Future<void> updateSongLikeStatus(
       error: e,
       stackTrace: stackTrace,
     );
+  } finally {
+    // Only the newest request for a song may clear its entry; an older one
+    // that finishes late still sees a different token and is ignored above.
+    if (_latestSongLikeUpdateTokens[normalizedSongId] == updateToken) {
+      _latestSongLikeUpdateTokens.remove(normalizedSongId);
+    }
   }
 }
 
