@@ -548,8 +548,7 @@ bool isSongAlreadyOffline(songIdToCheck) {
 
 bool isPlaylistFullyOffline(List songs) {
   if (songs.isEmpty) return false;
-  final offlineIds = userOfflineSongs.value.map((s) => s['ytid']).toSet();
-  return songs.every((s) => offlineIds.contains(s['ytid']));
+  return songs.every((s) => _cachedOfflineSongIds.contains(songYtid(s)));
 }
 
 Map<String, dynamic> getOfflineSongByYtid(String ytid) {
