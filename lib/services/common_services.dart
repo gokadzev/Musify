@@ -600,10 +600,21 @@ Future<List<String>> getSearchSuggestions(String query) async {
   return suggestions;
 }
 
-// Throws on network, HTTP and parsing failure instead of swallowing it, so
-// callers that need to tell "confirmed no segments" apart from "failed to
-// fetch" (e.g. the offline cache, which must not persist a false negative)
-// can do so.
+List<Map<String, int>> _mergeSkipSegments(List<Map<String, int>> segments) {
+  final sorted = [...segments]
+    ..sort((a, b) => a['start']!.compareTo(b['start']!));
+  final merged = <Map<String, int>>[];
+  for (final segment in sorted) {
+    if (segment['end']! <= segment['start']!) continue;
+    if (merged.isNotEmpty && segment['start']! <= merged.last['end']!) {
+      merged.last['end'] = max(merged.last['end']!, segment['end']!);
+    } else {
+      merged.add({...segment});
+    }
+  }
+  return merged;
+}
+
 Future<List<Map<String, int>>> _fetchSkipSegments(String id) async {
   final res = await ProxyManager().getProxiedResponse(
     Uri(
@@ -632,14 +643,14 @@ Future<List<Map<String, int>>> _fetchSkipSegments(String id) async {
     throw HttpException('SponsorBlock responded ${res.statusCode} for $id');
   }
 
-  final data = jsonDecode(res.body);
-  final segments = data.map((obj) {
-    return Map.castFrom<String, dynamic, String, int>({
-      'start': obj['segment'].first.toInt(),
-      'end': obj['segment'].last.toInt(),
-    });
-  }).toList();
-  return List.castFrom<dynamic, Map<String, int>>(segments);
+  final data = jsonDecode(res.body) as List;
+  return _mergeSkipSegments([
+    for (final obj in data)
+      {
+        'start': (obj['segment'].first as num).floor(),
+        'end': (obj['segment'].last as num).ceil(),
+      },
+  ]);
 }
 
 Future<List<Map<String, int>>> getSkipSegments(String id) async {
