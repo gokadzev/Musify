@@ -739,7 +739,9 @@ void _cacheSelectedAudioStream(String songId, AudioOnlyStreamInfo stream) {
 /// it again. Used when a cached URL turns out to be dead.
 Future<void> invalidateSongStreamCache(String songId) async {
   _selectedAudioStreams.remove(_selectedAudioStreamKey(songId));
-  await deleteData('cache', 'song_${songId}_${audioQualitySetting.value}_url');
+  final cacheKey = 'song_${songId}_${audioQualitySetting.value}_url';
+  await deleteData('cache', cacheKey);
+  await deleteData('cache', '${cacheKey}_date');
 }
 
 /// Fetches the best available audio stream for a song.
