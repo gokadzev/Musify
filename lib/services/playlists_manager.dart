@@ -164,7 +164,7 @@ Future<List<dynamic>> getUserPlaylists() async {
       return {
         'ytid': plist.id.toString(),
         'title': plist.title,
-        'image': null,
+        'image': plist.thumbnails.mediumResUrl,
         'source': 'user-youtube',
         'list': [],
       };
