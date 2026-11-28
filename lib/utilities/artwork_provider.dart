@@ -44,10 +44,10 @@ class ArtworkProvider {
         final commaIdx = artwork.indexOf(',');
         if (commaIdx == -1) throw Exception('invalid base64 image');
         final bytes = base64Decode(artwork.substring(commaIdx + 1));
-        provider = MemoryImage(bytes);
+        provider = ResizeImage(MemoryImage(bytes), width: 600);
       } else if (artwork.startsWith('file://') || artwork.startsWith('/')) {
         final path = artwork.replaceFirst('file://', '');
-        provider = FileImage(File(path));
+        provider = ResizeImage(FileImage(File(path)), width: 600);
       } else {
         provider = AssetImage(artwork);
       }
