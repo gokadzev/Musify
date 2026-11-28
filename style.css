@@ -65,7 +65,12 @@ body {
   min-height: 100vh;
   background: var(--surface);
   color: var(--on-surface);
-  font-family: "Roboto Flex", system-ui, -apple-system, "Segoe UI", sans-serif;
+  font-family:
+    "Roboto Flex",
+    system-ui,
+    -apple-system,
+    "Segoe UI",
+    sans-serif;
   font-size: 1rem;
   line-height: 1.5;
   padding-left: var(--rail-width);
@@ -703,14 +708,9 @@ button:focus-visible,
   padding: 7px;
   border-radius: 40px;
   background: var(--surface-container-highest);
-  box-shadow: 0 0 0 2px var(--outline-variant), 0 18px 40px rgba(0, 0, 0, 0.4);
   transform: scale(calc(1 - var(--t) * 0.12));
   opacity: calc(1 - var(--t) * 0.45);
   transition: box-shadow 0.3s ease;
-}
-
-.gallery li.is-active {
-  box-shadow: 0 0 0 2px var(--primary), 0 24px 56px rgba(0, 0, 0, 0.55);
 }
 
 .gallery img {
